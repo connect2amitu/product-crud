@@ -15,3 +15,14 @@ export const fetchProducts = async ({ limit, skip }) => {
 		throw error;
 	}
 };
+
+export const removeProduct = async (productId) => {
+	try {
+		const result = await fetch(`${API_URL}/${productId}`, { method: 'DELETE' });
+		const { isDeleted } = await result.json();
+
+		return isDeleted;
+	} catch (error) {
+		throw error;
+	}
+};

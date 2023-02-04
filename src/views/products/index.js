@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import { confirmAlert } from 'react-confirm-alert';
 
 import { ProductContext } from '../../context/products/provider';
 
@@ -6,9 +7,9 @@ import { Button } from '../../components/Button';
 import { Loader } from '../../components/Loader';
 
 const Products = () => {
-	const { products, setPage, getProducts } = useContext(ProductContext);
+	const { products, setPage, getProducts, deleteProduct } = useContext(ProductContext);
 
-	const { data, total, page, limit, isLoading } = products;
+	const { data, total, page, limit, isLoading, isDeleting } = products;
 
 	useEffect(() => {
 		getProducts({ page, limit });
@@ -18,6 +19,36 @@ const Products = () => {
 	const pageChangeHandler = (page) => {
 		setPage(page);
 		getProducts({ page, limit });
+	};
+
+	// Delete Product handler
+	const deleteProductHandler = (productId) => {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				return (
+					<div className='custom-confirm-ui'>
+						<h1>Are you sure?</h1>
+						<p>You want to delete this Product?</p>
+						<div className='action'>
+							<button className='btn btn-default' onClick={onClose}>
+								No
+							</button>
+							<button
+								className='btn btn-danger'
+								onClick={() => {
+									deleteProduct(productId);
+									onClose();
+								}}
+							>
+								Yes, Delete it!
+							</button>
+						</div>
+					</div>
+				);
+			},
+			closeOnEscape: isDeleting ? false : true,
+			closeOnClickOutside: isDeleting ? false : true,
+		});
 	};
 
 	// Discount Price count
@@ -55,7 +86,7 @@ const Products = () => {
 									<Button className='btn btn-primary' label={'Edit'} />
 								</td>
 								<td>
-									<Button className='btn btn-danger' label={'Delete'} />
+									<Button className='btn btn-danger' onClick={() => !isDeleting && deleteProductHandler(product.id)} label={'Delete'} />{' '}
 								</td>
 							</tr>
 						))}

@@ -3,7 +3,7 @@ import React, { useReducer, createContext } from 'react';
 import { actions } from './actions';
 import productsReducer from './reducer';
 
-import { fetchProducts } from '../../services/products';
+import { fetchProducts, removeProduct } from '../../services/products';
 
 const intialState = {
 	data: [],
@@ -32,11 +32,25 @@ const ProductProvider = ({ children }) => {
 		}
 	};
 
+	const deleteProduct = async (productId) => {
+		dispatch({ type: actions.DELETE_START });
+		try {
+			const deleted = await removeProduct(productId);
+			if (deleted) {
+				dispatch({ type: actions.DELETE_SUCCESS, payload: productId });
+			} else {
+				dispatch({ type: actions.DELETE_ERROR, payload: { error: 'Something went wrong' } });
+			}
+		} catch (error) {
+			dispatch({ type: actions.DELETE_ERROR, payload: { error: 'Something went wrong' } });
+		}
+	};
+
 	const setPage = (page) => {
 		dispatch({ type: actions.SET_PAGE, payload: page });
 	};
 
-	return <ProductContext.Provider value={{ products: state, getProducts, setPage }}>{children}</ProductContext.Provider>;
+	return <ProductContext.Provider value={{ products: state, getProducts, deleteProduct, setPage }}>{children}</ProductContext.Provider>;
 };
 
 export default ProductProvider;

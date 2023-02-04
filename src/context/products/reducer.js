@@ -20,6 +20,24 @@ const productsReducer = (state, action) => {
 			return { ...state, error: action.payload.error, isLoading: false };
 		}
 
+		// DELETE
+		case actions.DELETE_START: {
+			return { ...state, isDeleting: true };
+		}
+
+		case actions.DELETE_SUCCESS: {
+			let prevproducts = [...state.data];
+			let index = prevproducts.findIndex((product) => product.id === action.payload);
+
+			index >= 0 && prevproducts.splice(index, 1);
+
+			return { ...state, data: prevproducts, isDeleting: false };
+		}
+
+		case actions.DELETE_ERROR: {
+			return { ...state, isDeleting: false, error: action.payload.error };
+		}
+
 		// PAGINATION
 		case actions.SET_PAGE: {
 			return { ...state, page: action.payload };
