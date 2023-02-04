@@ -1,0 +1,7 @@
+export const actions = {
+	FETCH_START: 'FETCH_START',
+	FETCH_SUCCESS: 'FETCH_SUCCESS',
+	FETCH_ERROR: 'FETCH_ERROR',
+
+	SET_PAGE: 'SET_PAGE',
+};
