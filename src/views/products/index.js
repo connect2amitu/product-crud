@@ -1,19 +1,27 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 
 import { ProductContext } from '../../context/products/provider';
 
+import EditProduct from './EditProduct';
 import { Button } from '../../components/Button';
 import { Loader } from '../../components/Loader';
 
 const Products = () => {
 	const { products, setPage, getProducts, deleteProduct } = useContext(ProductContext);
+	const [updateForm, setUpdateForm] = useState({ open: false, selectedProduct: null });
 
-	const { data, total, page, limit, isLoading, isDeleting } = products;
+	const { data, total, page, limit, isUpdating, isDeleting, isLoading } = products;
 
 	useEffect(() => {
 		getProducts({ page, limit });
 	}, []);
+
+	useEffect(() => {
+		if (updateForm.open && !isUpdating) {
+			setUpdateForm({ open: !updateForm.open, selectedProduct: null });
+		}
+	}, [isUpdating]);
 
 	// Page change handler
 	const pageChangeHandler = (page) => {
@@ -51,6 +59,11 @@ const Products = () => {
 		});
 	};
 
+	// Edit Product Form
+	const onCloseForm = () => {
+		!isUpdating && setUpdateForm({ open: !updateForm.open, selectedProduct: null });
+	};
+
 	// Discount Price count
 	const discountedPrice = ({ price, discountPercentage }) => {
 		let calclutedPrice = price - (price * discountPercentage) / 100;
@@ -83,10 +96,14 @@ const Products = () => {
 								<td>{product.title}</td>
 								<td>{discountedPrice({ price: product.price, discountPercentage: product.discountPercentage })}</td>
 								<td>
-									<Button className='btn btn-primary' label={'Edit'} />
+									<Button
+										className='btn btn-primary'
+										onClick={() => setUpdateForm({ open: !updateForm.open, selectedProduct: product })}
+										label={'Edit'}
+									/>
 								</td>
 								<td>
-									<Button className='btn btn-danger' onClick={() => !isDeleting && deleteProductHandler(product.id)} label={'Delete'} />{' '}
+									<Button className='btn btn-danger' onClick={() => !isDeleting && deleteProductHandler(product.id)} label={'Delete'} />
 								</td>
 							</tr>
 						))}
@@ -109,6 +126,8 @@ const Products = () => {
 					</tr>
 				</tfoot>
 			</table>
+
+			{updateForm.open && <EditProduct updateForm={updateForm} onClose={onCloseForm} />}
 		</div>
 	);
 };

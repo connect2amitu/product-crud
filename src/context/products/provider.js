@@ -3,7 +3,7 @@ import React, { useReducer, createContext } from 'react';
 import { actions } from './actions';
 import productsReducer from './reducer';
 
-import { fetchProducts, removeProduct } from '../../services/products';
+import { editProduct, fetchProducts, removeProduct } from '../../services/products';
 
 const intialState = {
 	data: [],
@@ -11,6 +11,8 @@ const intialState = {
 	page: 0,
 	limit: 10,
 	isLoading: true,
+	isDeleting: false,
+	isUpdating: false,
 	error: null,
 };
 
@@ -32,6 +34,25 @@ const ProductProvider = ({ children }) => {
 		}
 	};
 
+	const updateProduct = async (productId, newDetails) => {
+		dispatch({ type: actions.UPDATE_START });
+		try {
+			const result = await editProduct(productId, newDetails);
+			if (result) {
+				dispatch({
+					type: actions.UPDATE_SUCCESS,
+					payload: { productId, newDetails },
+				});
+
+				dispatch({ type: actions.STOP_UPDATING });
+			} else {
+				dispatch({ type: actions.UPDATE_ERROR, payload: { error: 'Something went wrong' } });
+			}
+		} catch (error) {
+			dispatch({ type: actions.UPDATE_ERROR, payload: { error: 'Something went wrong' } });
+		}
+	};
+
 	const deleteProduct = async (productId) => {
 		dispatch({ type: actions.DELETE_START });
 		try {
@@ -50,7 +71,9 @@ const ProductProvider = ({ children }) => {
 		dispatch({ type: actions.SET_PAGE, payload: page });
 	};
 
-	return <ProductContext.Provider value={{ products: state, getProducts, deleteProduct, setPage }}>{children}</ProductContext.Provider>;
+	return (
+		<ProductContext.Provider value={{ products: state, getProducts, deleteProduct, updateProduct, setPage }}>{children}</ProductContext.Provider>
+	);
 };
 
 export default ProductProvider;

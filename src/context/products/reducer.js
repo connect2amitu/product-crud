@@ -20,6 +20,27 @@ const productsReducer = (state, action) => {
 			return { ...state, error: action.payload.error, isLoading: false };
 		}
 
+		// UPDATE
+		case actions.UPDATE_START: {
+			return { ...state, isUpdating: true };
+		}
+
+		case actions.UPDATE_SUCCESS: {
+			let prevProducts = [...state.data];
+			let index = prevProducts.findIndex((product) => product.id === action.payload.productId);
+
+			if (index >= 0) {
+				prevProducts[index].title = action.payload.newDetails.title;
+				prevProducts[index].price = action.payload.newDetails.price;
+			}
+
+			return { ...state, data: prevProducts, isUpdating: false };
+		}
+
+		case actions.UPDATE_ERROR: {
+			return { ...state, error: action.payload.error, isUpdating: false };
+		}
+
 		// DELETE
 		case actions.DELETE_START: {
 			return { ...state, isDeleting: true };
@@ -37,7 +58,6 @@ const productsReducer = (state, action) => {
 		case actions.DELETE_ERROR: {
 			return { ...state, isDeleting: false, error: action.payload.error };
 		}
-
 		// PAGINATION
 		case actions.SET_PAGE: {
 			return { ...state, page: action.payload };

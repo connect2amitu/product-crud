@@ -26,3 +26,18 @@ export const removeProduct = async (productId) => {
 		throw error;
 	}
 };
+
+export const editProduct = async (productId, newDetails) => {
+	try {
+		const response = await fetch(`${API_URL}/${productId}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(newDetails),
+		});
+		const result = await response.json();
+
+		return result;
+	} catch (error) {
+		throw error;
+	}
+};
