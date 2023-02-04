@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import './assets/styles/index.css';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

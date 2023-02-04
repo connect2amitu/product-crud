@@ -76,19 +76,13 @@ const Products = () => {
 				<thead>
 					<tr>
 						<th>Image</th>
-						<th>Name</th>
+						<th className='name'>Name</th>
 						<th>Price</th>
 						<th colSpan={2}>Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						{isLoading && (
-							<td colSpan={4}>
-								<Loader text='Loading...' />
-							</td>
-						)}
-					</tr>
+					{isLoading && <Loader text='Loading...' />}
 					{data.length > 0 &&
 						data.map((product) => (
 							<tr key={product.id}>
@@ -108,23 +102,30 @@ const Products = () => {
 							</tr>
 						))}
 				</tbody>
-				<tfoot>
-					<tr>
-						<td colSpan={3}></td>
-						<td colSpan={2} align='right'>
-							<div>
-								<Button className='btn btn-warning' onClick={() => pageChangeHandler(page - 1)} disabled={page <= 0 ? true : false} label='&#8249;' />
-								<Button className='btn btn-default' label={page + 1} />
-								<Button
-									className='btn btn-warning'
-									onClick={() => pageChangeHandler(page + 1)}
-									disabled={page >= total / limit - 1 ? true : false}
-									label='&#8250;'
-								/>
-							</div>
-						</td>
-					</tr>
-				</tfoot>
+				{data.length > 0 && (
+					<tfoot>
+						<tr>
+							<td colSpan={3}></td>
+							<td colSpan={2} align='right'>
+								<div>
+									<Button
+										className='btn btn-warning btn-round'
+										onClick={() => pageChangeHandler(page - 1)}
+										disabled={page <= 0 ? true : false}
+										label='&#8249;'
+									/>
+									<Button className='btn btn-default' label={page + 1} />
+									<Button
+										className='btn btn-warning btn-round'
+										onClick={() => pageChangeHandler(page + 1)}
+										disabled={page >= total / limit - 1 ? true : false}
+										label='&#8250;'
+									/>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
+				)}
 			</table>
 
 			{updateForm.open && <EditProduct updateForm={updateForm} onClose={onCloseForm} />}

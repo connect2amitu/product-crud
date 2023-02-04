@@ -22,7 +22,7 @@ const EditProduct = ({ onClose, updateForm }) => {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty, isValid },
 	} = useForm({
 		mode: 'onChange',
 		resolver: yupResolver(schema),
@@ -70,7 +70,12 @@ const EditProduct = ({ onClose, updateForm }) => {
 
 					<div className='text-align-end'>
 						<Button className='btn btn-default' label={'Cancel'} onClick={closeHandler} />
-						<Button type='submit' className='btn btn-success' label={isUpdating ? 'Updating..' : 'Update'} />
+						<Button
+							type='submit'
+							disabled={!isDirty || !isValid}
+							className={`btn btn-success ${!isDirty || !isValid ? 'disabled' : ''}`}
+							label={isUpdating ? 'Updating..' : 'Update'}
+						/>
 					</div>
 				</div>
 			</form>
